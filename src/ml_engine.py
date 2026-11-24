@@ -344,11 +344,37 @@ def generate_diagnostic_figures(df_tramites, y1_test, y1_pred, y3_test, y3_pred,
     plt.close(fig)
 
 
+_LOADED_MODELS = {}
+
+def get_model(name: str):
+    """
+    Carga el modelo de Machine Learning con auto-recuperación (Auto-Healing).
+    Si los archivos .joblib fueron serializados en una versión distinta de scikit-learn
+    (como al pasar de Windows a Linux en Streamlit Cloud), detecta la incompatibilidad,
+    reentrena los modelos automáticamente con el entorno local en segundos y los carga sin errores.
+    """
+    if name in _LOADED_MODELS:
+        return _LOADED_MODELS[name]
+
+    model_path = os.path.join(MODELS_DIR, f"{name}.joblib")
+    try:
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(f"Modelo {name} no encontrado en {model_path}")
+        model = joblib.load(model_path)
+    except Exception as e:
+        print(f"[ML Auto-Healing] Incompatibilidad de entorno detectada ({e}). Reentrenando modelos en el entorno actual...")
+        train_and_evaluate_all()
+        model = joblib.load(model_path)
+
+    _LOADED_MODELS[name] = model
+    return model
+
+
 def predict_single_tramite(payload: dict) -> dict:
     """Ejecuta inferencia en tiempo real sobre un nuevo trámite ingresado por ventanilla o mesa virtual."""
-    clf_prioridad = joblib.load(os.path.join(MODELS_DIR, "modelo_priorizacion_tramites.joblib"))
-    clf_errores = joblib.load(os.path.join(MODELS_DIR, "modelo_detector_errores.joblib"))
-    reg_sla = joblib.load(os.path.join(MODELS_DIR, "modelo_regresion_sla.joblib"))
+    clf_prioridad = get_model("modelo_priorizacion_tramites")
+    clf_errores = get_model("modelo_detector_errores")
+    reg_sla = get_model("modelo_regresion_sla")
 
     num_req = max(1, int(payload.get("num_requisitos_exigidos", 6)))
     req_falt = int(payload.get("requisitos_faltantes", 0))
@@ -402,7 +428,7 @@ def predict_single_tramite(payload: dict) -> dict:
 
 def evaluate_candidate_cv(payload: dict) -> dict:
     """Evalúa un currículo en tiempo real contra una convocatoria CAS de la Municipalidad Provincial de Yau."""
-    clf_cv = joblib.load(os.path.join(MODELS_DIR, "modelo_seleccion_cv.joblib"))
+    clf_cv = get_model("modelo_seleccion_cv")
 
     row = pd.DataFrame([{
         "codigo_convocatoria": payload.get("codigo_convocatoria", "CAS-YAU-002"),

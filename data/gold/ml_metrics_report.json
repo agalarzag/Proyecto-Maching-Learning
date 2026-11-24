@@ -1,0 +1,39 @@
+{
+  "modelo_1_priorizacion": {
+    "algoritmo": "Gradient Boosting Classifier + TF-IDF NLP",
+    "accuracy": 0.813,
+    "precision_macro": 0.6947,
+    "recall_macro": 0.6847,
+    "f1_macro": 0.6869,
+    "f1_weighted": 0.8121,
+    "roc_auc_ovr": 0.9472,
+    "clases": [
+      "0: BAJA",
+      "1: MEDIA",
+      "2: ALTA",
+      "3: CRITICA"
+    ]
+  },
+  "modelo_2_deteccion_errores": {
+    "algoritmo": "Random Forest Classifier (Class-Balanced)",
+    "accuracy": 0.896,
+    "precision": 0.8953,
+    "recall": 0.8527,
+    "f1_score": 0.8735,
+    "roc_auc": 0.962
+  },
+  "modelo_3_regresion_sla": {
+    "algoritmo": "Gradient Boosting Regressor",
+    "mae_dias": 1.7657,
+    "rmse_dias": 2.226,
+    "r2_score": 0.9642
+  },
+  "modelo_4_seleccion_curriculos": {
+    "algoritmo": "Hybrid TF-IDF + Gradient Boosting Classifier",
+    "accuracy": 0.9625,
+    "precision": 0.9118,
+    "recall": 0.9118,
+    "f1_score": 0.9118,
+    "roc_auc": 0.9883
+  }
+}

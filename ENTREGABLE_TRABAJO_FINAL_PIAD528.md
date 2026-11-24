@@ -172,6 +172,13 @@ Se establecieron métricas técnicas de Ciencia de Datos evaluadas sobre un conj
 | **M3: Predictor de Plazo SLA (Días)** | `GradientBoostingRegressor` | — | MAE: **1.77 días** | RMSE: **2.23 días** | — | **96.42%** ($R^2$ Score) |
 | **M4: Selección de Currículos CAS** | `TF-IDF` + `GradientBoostingClassifier` | **96.25%** | **91.18%** | **91.18%** | **91.18%** | **98.83%** (ROC-AUC) |
 
+#### C. Robustez ante Formatos Heterogéneos de CV (Layout-Agnostic)
+El sistema implementa **4 capas de blindaje** que garantizan que el procesamiento no colapse ante currículums con formatos arbitrarios (Canva, Word, Europass, Harvard, multi-columna o texto plano):
+1. **Extracción agnóstica de estructura:** Extracción de flujos de texto continuos sin depender de coordenadas visuales estáticas.
+2. **Procesamiento de Lenguaje Natural (TF-IDF):** Ponderación semántica de competencias técnicas en cualquier sección del documento.
+3. **Manejo de categorías no vistas:** Configuración con `handle_unknown="ignore"` en Scikit-Learn para prevenir errores por términos no registrados.
+4. **Valores por defecto seguros (*Fail-safes*):** Prevención de excepciones por datos incompletos mediante imputación segura y dictamen matemático transparente.
+
 $$\text{F1-Score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}, \quad \text{MAE} = \frac{1}{n}\sum_{i=1}^{n} |y_i - \hat{y}_i|, \quad R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}$$
 
 #### B. Métricas de Impacto en Gestión Municipal

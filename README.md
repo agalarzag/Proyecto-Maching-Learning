@@ -65,6 +65,13 @@ flowchart TB
 | **M3: Predictor de Plazo SLA** | Regresión (`GradientBoostingRegressor`) | **96.42% $R^2$** (MAE: $\pm 1.77$ días) | Calcula cuántos días hábiles tardará la gerencia responsable según su carga operativa actual, proyectando una reducción mayor al 55% en tiempos de espera. |
 | **M4: Selección de Currículos** | Clasificación Híbrida (`TF-IDF` + `GradientBoostingClassifier`) | **98.83% ROC-AUC** (96.25% Exactitud) | Extrae experiencia, grado académico y habilidades técnicas de los CVs en PDF, verificando automáticamente inhabilitaciones en el RNSSC de SERVIR sin sesgos humanos. |
 
+### 🛡️ Robustez y Tolerancia a Cualquier Formato de CV (Layout-Agnostic)
+El sistema está diseñado con **4 capas de blindaje** para procesar currículums en cualquier formato (Canva, Word, Europass, Harvard, multi-columna o texto plano) sin riesgo de colapso:
+1. **Extracción agnóstica al diseño:** El motor procesa los flujos de contenido textual continuos sin depender de coordenadas rígidas.
+2. **Semántica NLP (TF-IDF):** Rastrea conceptos técnicos y competencias clave independientemente del orden de las secciones.
+3. **Manejo de valores desconocidos:** Configurado con `OneHotEncoder(handle_unknown="ignore")` para evitar excepciones ante convocatorias o términos no vistos.
+4. **Valores de respaldo seguros (*Fail-safes*):** Si un CV omite datos o tiene baja densidad de texto, el sistema asigna valores base seguros y dictamina `NO APTO` matemáticamente en lugar de detener la ejecución.
+
 ---
 
 ## 📂 3. Documentos Oficiales de Prueba Incluidos (`EJEMPLOS_PDF_PARA_SUBIR/`)
